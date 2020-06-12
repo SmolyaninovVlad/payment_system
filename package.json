@@ -1,0 +1,35 @@
+{
+  "name": "paymentsystem",
+  "version": "1.0.0",
+  "description": "will add description later",
+  "main": "index.js",
+  "dependencies": {
+    "react-dom": "^16.13.1",
+    "react": "^16.13.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.3",
+    "html-webpack-plugin": "^4.3.0",
+    "style-loader": "^1.2.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "scripts": {
+    "start": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/SmolyaninovVlad/payment_system.git"
+  },
+  "author": "smolyaninov_va",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SmolyaninovVlad/payment_system/issues"
+  },
+  "homepage": "https://github.com/SmolyaninovVlad/payment_system#readme"
+}

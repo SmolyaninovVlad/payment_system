@@ -1,0 +1,24 @@
+
+LimitRequestBody 10240000
+
+<IfModule mod_rewrite.c>
+
+RewriteCond %{REQUEST_URI} payments/$
+RewriteRule ^payments/(.*)$ /payments/index.php$1 [R=301,L]
+
+
+RewriteEngine On  
+  
+#„обавил переход на index.php с определением роута с передачей гет параметров
+RewriteCond %{SCRIPT_FILENAME} !-d  
+RewriteCond %{SCRIPT_FILENAME} !-f  
+RewriteCond %{QUERY_STRING} ^(.*)$ [NC]
+RewriteRule ^(.*)$ ./api/index.php?route=$1&%1 [L]
+
+#„обавил переход на index.php с определением роута без гет параметров
+RewriteCond %{SCRIPT_FILENAME} !-d  
+RewriteCond %{SCRIPT_FILENAME} !-f  
+RewriteRule ^(.*)$ ./api/index.php?route=$1 [L]
+
+</ifModule>
+
