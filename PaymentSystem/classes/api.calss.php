@@ -197,6 +197,7 @@ class API {
         //Проверка на метод
         if ($this->method != 'POST') return $this->_badData("Only POST requests are available for this method");
         //Проверка на то что введенны корректные данные
+        if (!is_array($this->data)) return $this->_badData("Empty parametres");
         if (!$this -> _isDataValid()) return $this->_badData();
         //Проверка на существование необходимых параметров для этого метода
         if (!$this->data['appointment']) {
