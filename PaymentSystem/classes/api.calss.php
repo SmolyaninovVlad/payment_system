@@ -123,6 +123,11 @@ class API {
                     if (!is_numeric($value)) $this->errors[]= $this->_determinate($key)." - не число";
                     $this->data[$key] = abs($value);
                     break;
+                case "fromDate":
+                case "toDate":
+                    if ($currentError) break;
+                    if (!$this->_is_Date($this->data[$key])) $this->errors[]= $this->_determinate($key)." - не дата";
+                    break;
             }
         }
         if (count($this->errors)>0) $success=false;
@@ -159,7 +164,9 @@ class API {
         if ($res) $this->hash_payment = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/payments/?sessionId=".$id_hash;
         return $res;
     }
-
+    private function _is_Date($str){
+        return is_numeric(strtotime($str));
+    }
 
 
 
@@ -170,6 +177,19 @@ class API {
         if ($this->method != 'POST') return $this->_badData("Only POST requests are available for this method");
         //Проверка на то что введенны корректные данные
         if (!$this -> _isDataValid()) return $this->_badData();
+        //Проверка на существование необходимых параметров для этого метода
+        if (!$this->data['appointment']) {
+            $this->errors[]= $this->_determinate("appointment")." - не заполнено";
+        }
+        if (!$this->data['card_Number']) {
+            $this->errors[]= $this->_determinate("card_Number")." - не заполнено";
+        }
+        if (!$this->data['total']) {
+            $this->errors[]= $this->_determinate("total")." - не заполнено";
+        }
+        //Вызов вывода ошибки если они есть
+        if (count($this->errors)>0) return $this->_badData();
+
         //Проверка по алгоритму Луна
         if (!$this -> _algorithmLuna()) return $this->_badData();
 
@@ -187,8 +207,10 @@ class API {
         //Проверка на то что введенны корректные данные
         if (!$this -> _isDataValid()) return $this->_badData();
 
-        $query = "SELECT `appointment`, `card_Number`, `total`, `date` FROM `payments` WHERE date between {?} AND {?}";
-        $res = $this->db->select($query, array($this->data['fromDate'],$this->data['toDate']));
+        $date1 = $this->data['fromDate']?"date >= {?}":"{?}";
+        $date2 = $this->data['toDate']?"date <= {?}":"{?}";
+        $query = "SELECT `appointment`, `card_Number`, `total`, `date` FROM `payments` WHERE ".$date1." AND ".$date2;
+        $res = $this->db->select($query, array($this->data['fromDate']?$this->data['fromDate']:"1",$this->data['toDate']?$this->data['toDate']:"1"));
 
         return $res;
     }
