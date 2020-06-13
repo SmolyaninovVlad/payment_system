@@ -89,10 +89,10 @@ class API {
                 return "Название платежа";
                 break;
             case "fromDate":
-                return "Дата начала";
+                return "Начальная дата";
                 break;
             case "toDate":
-                return "Дата окончания";
+                return "Конечная дата";
                 break;
         }
         return $text;
@@ -156,7 +156,7 @@ class API {
         if (!$result) $this->errors[]= "Алгоритм Луна: ошибка проверки";
         return $result;
     }
-    private function setHashPayment($res){
+    private function _setHashPayment($res){
         if (!intval($res)) return false;
         $id_hash = "pay-".md5($res);
         $query = "UPDATE payments SET sessionId={?} WHERE id={?}";
@@ -167,7 +167,28 @@ class API {
     private function _is_Date($str){
         return is_numeric(strtotime($str));
     }
-
+    private function _sendAsyncRequest($url, $params){
+        //Набор необходимых параметров
+        foreach ($params as $key => &$val) {
+            if (is_array($val)) $val = implode(',', $val);
+            $post_params[] = $key.'='.urlencode($val);
+        }
+        $post_string = implode('&', $post_params);
+    
+        $parts=parse_url($url);
+    
+        $fp = fsockopen($parts['host'],isset($parts['port'])?$parts['port']:80,$errno, $errstr, 30);
+    
+        $out = "POST ".$parts['path']." HTTP/1.1\r\n";
+        $out.= "Host: ".$parts['host']."\r\n";
+        $out.= "Content-Type: application/x-www-form-urlencoded\r\n";
+        $out.= "Content-Length: ".strlen($post_string)."\r\n";
+        $out.= "Connection: Close\r\n\r\n";
+        if (isset($post_string)) $out.= $post_string;
+    
+        fwrite($fp, $out);
+        fclose($fp);
+    }
 
 
     // далее идут API`s
@@ -196,7 +217,12 @@ class API {
         $query = "INSERT INTO payments (appointment, card_Number, total, date) VALUES ({?},{?},{?},{?})";
         $res = $this->db->query($query, array($this->data['appointment'], $this->data['card_Number'], $this->data['total'], date("Y-m-d H:i:s")));
         //Успешная оплата, добавляем идентификатор для доступа
-        if (!$this->setHashPayment($res)) return $this->_badData("Ошибка оплаты (ошибка запроса в БД)");
+        if (!$this->_setHashPayment($res)) return $this->_badData("Ошибка оплаты (ошибка запроса в БД)");
+        //Отправка асинхронного запроса по переданному URL
+        if (strlen($this->data['url'])>0) $this->_sendAsyncRequest($this->data['url'], array("action"=>"payment", 
+                                                                                            "appointment"=>$this->data['appointment'], 
+                                                                                            "amount"=>$this->data['total'], 
+                                                                                            "card_Number"=>$this->data['card_Number']));
 
         return $this->hash_payment;
     }

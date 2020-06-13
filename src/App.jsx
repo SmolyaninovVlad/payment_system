@@ -1,13 +1,16 @@
 import React, { Component }  from "react"
-
 import './App.css'
+
+//URL для асинхронного запроса при успешной оплате
+const acync_url = "http://"+location.host+"/payments/asyncRequest/"
 
 const service = {
     sendData : (data) => {
         data = {
             "appointment":  data.appointment,
             "card_Number":  data.card_Number,
-            "total":        data.total
+            "total":        data.total,
+            "url":          acync_url          
         }
         let requestOptions = {
             method: 'POST',
