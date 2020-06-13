@@ -28,11 +28,12 @@ const service = {
     getData : (data) => {
         let requestOptions = {
             method: 'GET',
-            headers:{'content-type': 'application/json'},
-            // body: JSON.stringify(data)
+            headers:{'content-type': 'application/json'}
         }
+        let fromDate = data.fromDate.length>0?'fromDate='+data.fromDate:""
+        let toDate = data.toDate.length>0?'toDate='+data.toDate:""
         return new Promise(function(resolve, reject) {
-            fetch('/getData?fromDate='+data.fromDate+'&toDate='+data.toDate,requestOptions)
+            fetch('/getData?'+fromDate+'&'+toDate,requestOptions)
                 .then(service.handleResponse)
                 .then(function (response){
                     resolve(response);
