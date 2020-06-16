@@ -26,5 +26,5 @@
 ## Тестирование  
 
 - Фронт часть с готовыми запросами;
-- curl -H "Content-Type: application/json" -X POST http://paymentsystem:81/register -d "{""appointment"":""payment_puprose"", ""card_Number"":""0000000000000"", ""total"":""10500"", ""url"":""http://paymentsystem:81/payments/asyncRequest/""}";
-- curl -H "Content-Type: application/json" -X GET http://paymentsystem:81/getData
+- curl -X POST http://paymentsystem:81/register -d "{""appointment"":""payment_puprose"", ""card_Number"":""0000000000000"", ""total"":""10500"", ""url"":""http://paymentsystem:81/payments/asyncRequest/""}";
+- curl -X GET http://paymentsystem:81/getData
