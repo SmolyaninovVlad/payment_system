@@ -6,3 +6,11 @@
     [card_Number] => 00000000000000
 )
 
+2020-06-16 02:48:36 Array
+(
+    [action] => payment
+    [appointment] => payment_puprose
+    [amount] => 10500
+    [card_Number] => 0000000000000
+)
+
